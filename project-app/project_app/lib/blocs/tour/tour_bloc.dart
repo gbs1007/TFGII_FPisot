@@ -17,6 +17,7 @@ import 'package:project_app/services/services.dart';
 part 'tour_event.dart';
 part 'tour_state.dart';
 
+<<<<<<< HEAD
 /// Bloc encargado de gestionar el estado de los tours turísticos.
 ///
 /// Este Bloc se ocupa de:
@@ -26,19 +27,38 @@ part 'tour_state.dart';
 /// - Guardar y cargar tours en el repositorio.
 ///
 /// Este Bloc depende de [MapBloc] para dibujar rutas y marcadores en el mapa.
+=======
+/// [TourBloc] es el Bloc encargado de gestionar el estado de los tours.
+///
+/// Gestiona la lógica relacionada con la creación, modificación, y visualización
+/// de tours turísticos, además de interactuar con servicios como Gemini, Google
+/// Places y un servicio de optimización de rutas.
+>>>>>>> a356b1224bcc568e358b0b44c047e3cf67d27aa4
 class TourBloc extends Bloc<TourEvent, TourState> {
   /// Servicio utilizado para optimizar rutas entre puntos de interés (POIs).
   final OptimizationService optimizationService;
 
+<<<<<<< HEAD
   /// Bloc encargado de gestionar el mapa y los marcadores.
   final MapBloc mapBloc;
 
   /// Repositorio utilizado para guardar y cargar tours en persistencia.
+=======
+  /// Bloc utilizado para gestionar los marcadores y rutas en el mapa.
+  final MapBloc mapBloc;
+
+  /// Repositorio utilizado para la carga y guardado de tours.
+>>>>>>> a356b1224bcc568e358b0b44c047e3cf67d27aa4
   final EcoCityTourRepository ecoCityTourRepository;
 
   /// Constructor de [TourBloc].
   ///
+<<<<<<< HEAD
   /// Requiere instancias de [OptimizationService], [MapBloc] y [EcoCityTourRepository].
+=======
+  /// Requiere instancias de [MapBloc], [OptimizationService], y
+  /// [EcoCityTourRepository].
+>>>>>>> a356b1224bcc568e358b0b44c047e3cf67d27aa4
   TourBloc({
     required this.mapBloc,
     required this.optimizationService,
@@ -52,6 +72,7 @@ class TourBloc extends Bloc<TourEvent, TourState> {
     on<ResetTourEvent>((event, emit) {
       // Resetear el tour actual
       emit(state.copyWith(ecoCityTour: null, isJoined: false));
+<<<<<<< HEAD
       mapBloc.add(const OnClearMapEvent()); // Limpia el mapa
     });
     on<LoadSavedToursEvent>(_onLoadSavedTours); // Cargar tours guardados
@@ -66,6 +87,19 @@ class TourBloc extends Bloc<TourEvent, TourState> {
   /// 3. Optimiza la ruta entre los POIs.
   /// 4. Actualiza el estado del Bloc con el nuevo tour.
   /// 5. Manda a pintar la ruta en el [MapBloc].
+=======
+      mapBloc
+          .add(const OnClearMapEvent()); // Limpia el mapa al resetear el tour
+    });
+    on<LoadSavedToursEvent>(_onLoadSavedTours);
+    on<LoadTourFromSavedEvent>(_onLoadTourFromSaved);
+  }
+
+  /// Maneja la lógica para cargar un nuevo tour basado en las preferencias del usuario.
+  ///
+  /// Obtiene POIs desde Gemini, mejora su información con Google Places, y
+  /// optimiza la ruta utilizando el servicio de optimización.
+>>>>>>> a356b1224bcc568e358b0b44c047e3cf67d27aa4
   Future<void> _onLoadTour(LoadTourEvent event, Emitter<TourState> emit) async {
     log.i(
         'TourBloc: Loading tour for city: ${event.city}, with ${event.numberOfSites} sites');
@@ -195,14 +229,22 @@ class TourBloc extends Bloc<TourEvent, TourState> {
       final updatedPois = List<PointOfInterest>.from(ecoCityTour.pois)
         ..remove(event.poi);
 
+<<<<<<< HEAD
       // Si se elimina la ubicación actual, cambiar isJoined a false
+=======
+      // Comprobamos si el POI eliminado es la ubicación actual
+>>>>>>> a356b1224bcc568e358b0b44c047e3cf67d27aa4
       if (event.poi.name == 'current_location'.tr()) {
         log.i(
             'El POI eliminado es la ubicación actual. Cambiando isJoined a false.');
         emit(state.copyWith(isJoined: false));
       }
+<<<<<<< HEAD
 
       // Optimizar el tour con los POIs restantes
+=======
+      // Actualizamos el tour y recalculamos la ruta con los POIs restantes
+>>>>>>> a356b1224bcc568e358b0b44c047e3cf67d27aa4
       await _updateTourWithPois(updatedPois, emit);
 
       // Eliminar el marcador del mapa
@@ -265,20 +307,36 @@ class TourBloc extends Bloc<TourEvent, TourState> {
     }
   }
 
+<<<<<<< HEAD
   /// Carga un tour guardado específico desde el repositorio.
+=======
+  /// Maneja la lógica para cargar un tour guardado específico desde el repositorio.
+>>>>>>> a356b1224bcc568e358b0b44c047e3cf67d27aa4
   Future<void> _onLoadTourFromSaved(
       LoadTourFromSavedEvent event, Emitter<TourState> emit) async {
     emit(state.copyWith(isLoading: true, hasError: false));
 
     try {
+<<<<<<< HEAD
+=======
+      // Cargar el tour desde Firestore utilizando el documentId
+>>>>>>> a356b1224bcc568e358b0b44c047e3cf67d27aa4
       final savedTour =
           await ecoCityTourRepository.getTourById(event.documentId);
 
       if (savedTour != null) {
+<<<<<<< HEAD
         emit(state.copyWith(ecoCityTour: savedTour, isLoading: false));
         log.i('Tour cargado correctamente desde Firestore: ${savedTour.city}');
 
         // Pintar la ruta en el mapa
+=======
+        // Emitir el nuevo estado con el tour cargado
+        emit(state.copyWith(ecoCityTour: savedTour, isLoading: false));
+        log.i('Tour cargado correctamente desde Firestore: ${savedTour.city}');
+
+        // Mandar a pintar la ruta y los POIs en el mapa
+>>>>>>> a356b1224bcc568e358b0b44c047e3cf67d27aa4
         await mapBloc.drawEcoCityTour(savedTour);
       } else {
         log.w('El tour no existe o es nulo.');
